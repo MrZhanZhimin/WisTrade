@@ -1,0 +1,87 @@
+# Test Configuration
+# This file is used for running tests
+
+app:
+  name: "WisTrade Test"
+  version: "0.1.0"
+  environment: "testing"
+  debug: true
+  log_level: "DEBUG"
+
+# AI Configuration
+ai:
+  provider: "mock"  # Use mock for testing
+  model: "mock-model"
+  api_key_env: "MOCK_API_KEY"
+  temperature: 0.7
+  max_tokens: 1000
+  timeout: 5
+
+# Broker Configuration (Mock)
+brokers:
+  default: "test_broker"
+  
+  test_broker:
+    name: "Test Broker"
+    type: "mock"
+    enabled: true
+    qmt_path: ""
+    account_min_assets: 0
+
+# Trading Configuration
+trading:
+  default_order_type: "limit"
+  order_timeout: 5
+  
+  risk:
+    max_position_pct: 0.20
+    max_daily_loss_pct: 0.05
+    max_sector_exposure_pct: 0.40
+    max_orders_per_second: 10
+    max_orders_per_day: 100
+    enable_auto_stop_loss: true
+    enable_auto_take_profit: true
+
+# Market Data Configuration
+market_data:
+  providers:
+    - "mock"
+  
+  mock:
+    enabled: true
+    timeout: 5
+
+# Database Configuration
+database:
+  type: "sqlite"
+  path: ":memory:"  # In-memory database for testing
+  encryption_enabled: false
+  
+  pool:
+    size: 5
+    timeout: 5
+
+# Logging Configuration
+logging:
+  format: "text"
+  output:
+    - "console"
+  
+  structured:
+    include_timestamp: true
+    include_session_id: true
+    include_user_id: false
+    checksum_enabled: false
+
+# UI Configuration
+ui:
+  theme: "dark"
+  language: "zh_CN"
+  window:
+    width: 800
+    height: 600
+    maximized_on_start: false
+
+# Notifications
+notifications:
+  enabled: false  # Disable notifications in tests
