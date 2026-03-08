@@ -1,0 +1,184 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wistrade"
+version = "0.1.0"
+description = "AI-Powered Stock Trading Automation Tool for Chinese Markets"
+authors = [
+    {name = "WisTrade Team", email = "team@wistrade.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "Apache-2.0"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+keywords = ["trading", "ai", "automation", "stock-market", "chinese-securities"]
+
+dependencies = [
+    # GUI Framework
+    "PyQt6>=6.6.0",
+    "pyqtgraph>=0.13.0",
+    
+    # AI & LLM
+    "openai>=1.0.0",
+    "zhipuai>=2.0.0",
+    "pydantic>=2.5.0",
+    
+    # Broker Integration (QMT)
+    "xtquant>=1.0.0",
+    "easyxt>=0.3.0",
+    
+    # Market Data
+    "akshare>=1.11.0",
+    "tushare>=1.3.0",
+    "yfinance>=0.2.0",
+    
+    # Async & Networking
+    "aiohttp>=3.9.0",
+    "httpx>=0.27.0",
+    "websocket-client>=1.7.0",
+    "websockets>=12.0",
+    
+    # Data Processing
+    "pandas>=2.2.0",
+    "numpy>=1.26.0",
+    "ta-lib>=0.4.28",
+    
+    # Storage & Security
+    "pysqlcipher3>=1.0.0",
+    "cryptography>=42.0.0",
+    "sqlalchemy>=2.0.0",
+    
+    # Configuration & Logging
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0.0",
+    "structlog>=24.1.0",
+    
+    # Utilities
+    "python-dateutil>=2.8.0",
+    "pytz>=2024.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Testing
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "pytest-qt>=4.2.0",
+    
+    # Code Quality
+    "black>=24.1.0",
+    "ruff>=0.2.0",
+    "mypy>=1.8.0",
+    "pre-commit>=3.6.0",
+    
+    # Documentation
+    "sphinx>=7.2.0",
+    "sphinx-rtd-theme>=2.0.0",
+    
+    # Development Tools
+    "ipython>=8.20.0",
+    "jupyter>=1.0.0",
+]
+
+[project.scripts]
+wistrade = "wistrade.main:main"
+wistrade-backtest = "wistrade.cli.backtest:main"
+
+[project.urls]
+Homepage = "https://github.com/MrZhanZhimin/WisTrade"
+Documentation = "https://github.com/MrZhanZhimin/WisTrade#readme"
+Repository = "https://github.com/MrZhanZhimin/WisTrade.git"
+Issues = "https://github.com/MrZhanZhimin/WisTrade/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 100
+target-version = ['py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # defaults
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/*" = ["B", "C"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+follow_imports = "silent"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "-s",
+    "--strict-markers",
+    "--tb=short",
+    "--asyncio-mode=auto",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "broker: marks tests requiring broker connection",
+]

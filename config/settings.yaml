@@ -1,0 +1,209 @@
+# WisTrade Configuration File
+# Environment: development | staging | production
+
+app:
+  name: "WisTrade"
+  version: "0.1.0"
+  environment: "development"
+  debug: true
+  log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+
+# AI Configuration (GLM-4.7)
+ai:
+  provider: "zhipuai"  # zhipuai | openai
+  model: "glm-4-plus"
+  api_key_env: "ZHIPUAI_API_KEY"
+  temperature: 0.7
+  max_tokens: 4000
+  timeout: 60
+  retry_attempts: 3
+  
+  # AI Agent Settings
+  agent:
+    max_iterations: 10
+    enable_reflection: true
+    tool_orchestration: true
+    # ReAct pattern: Plan → Acquire → Reason → Act
+    reasoning_pattern: "react"
+
+# Broker Configuration
+brokers:
+  # Supported brokers: zhao_shang (招商), guang_da (光大), jiang_hai (江海)
+  default: "zhao_shang"
+  
+  zhao_shang:
+    name: "招商证券"
+    type: "qmt"
+    enabled: true
+    qmt_path: ""  # Path to QMT client, leave empty for auto-detect
+    account_min_assets: 100000  # ¥100,000 minimum for API access
+    
+  guang_da:
+    name: "光大证券"
+    type: "qmt"
+    enabled: true
+    qmt_path: ""
+    account_min_assets: 100000
+    
+  jiang_hai:
+    name: "江海证券"
+    type: "qmt"
+    enabled: false  # Requires verification
+    qmt_path: ""
+    account_min_assets: 100000
+
+# Trading Configuration
+trading:
+  # Order Management
+  default_order_type: "limit"  # limit | market
+  order_timeout: 30  # seconds
+  
+  # Risk Controls (Compliance)
+  risk:
+    max_position_pct: 0.20  # 20% max per stock
+    max_daily_loss_pct: 0.05  # 5% daily loss limit
+    max_sector_exposure_pct: 0.40  # 40% max per sector
+    max_orders_per_second: 40  # Avoid HFT classification (<50)
+    max_orders_per_day: 3000  # Below HFT threshold (<20,000)
+    enable_auto_stop_loss: true
+    enable_auto_take_profit: true
+    
+  # Strategy Settings
+  strategy:
+    default_leverage: 1  # No margin for retail
+    max_leverage: 2
+    enable_backtest: true
+    backtest_days: 90
+    slippage_bps: 5.0  # 0.05% slippage in backtest
+
+# Market Data Configuration
+market_data:
+  providers:
+    - "akshare"
+    - "tushare"
+  
+  akshare:
+    enabled: true
+    timeout: 30
+    
+  tushare:
+    enabled: true
+    api_key_env: "TUSHARE_TOKEN"
+    timeout: 30
+    
+  # Real-time data
+  realtime:
+    enabled: true
+    update_interval: 1  # seconds
+    symbols_watchlist: []  # Populated dynamically
+    
+  # Historical data cache
+  cache:
+    enabled: true
+    max_age_hours: 6
+    max_size_mb: 500
+
+# Database Configuration
+database:
+  type: "sqlite"
+  path: "data/wistrade.db"
+  
+  # Encryption (SQLCipher)
+  encryption:
+    enabled: true
+    key_derivation: "pbkdf2"
+    iterations: 480000  # OWASP recommendation
+  
+  # Connection Pool
+  pool:
+    size: 10
+    timeout: 30
+    
+  # Retention Policy (Compliance)
+  retention:
+    trading_logs: "5 years"
+    access_logs: "6 months"
+    system_logs: "1 year"
+    audit_trail: "5 years"
+
+# Logging Configuration
+logging:
+  format: "json"  # json | text
+  output:
+    - "file"
+    - "console"
+  
+  file:
+    path: "logs/wistrade.log"
+    max_size_mb: 100
+    backup_count: 10
+    rotation: "daily"
+    
+  # Structured logging
+  structured:
+    include_timestamp: true
+    include_session_id: true
+    include_user_id: true
+    checksum_enabled: true  # Tamper-evidence
+
+# Compliance & Disclosure
+compliance:
+  # Risk warnings
+  show_startup_warning: true
+  warning_acknowledgment_required: true
+  
+  # Audit settings
+  audit_enabled: true
+  audit_all_trades: true
+  audit_all_api_calls: true
+  
+  # Regulatory reporting
+  programmatic_trading_registered: false  # User must register with broker
+  hft_classification_threshold:
+    orders_per_second: 300
+    orders_per_day: 20000
+
+# UI Configuration
+ui:
+  theme: "dark"  # dark | light
+  language: "zh_CN"  # zh_CN | en_US
+  window:
+    width: 1600
+    height: 900
+    maximized_on_start: true
+  
+  # Charts
+  charts:
+    default_timeframe: "1D"  # 1M, 5M, 15M, 1H, 1D, 1W
+    max_visible_candles: 500
+    enable_realtime_updates: true
+    update_interval_ms: 1000
+
+# Notifications
+notifications:
+  enabled: true
+  channels:
+    - "desktop"  # System notification
+    - "sound"
+    - "log"
+  
+  # Alert rules
+  alerts:
+    trade_executed: true
+    order_failed: true
+    risk_limit_breach: true
+    connection_lost: true
+    ai_strategy_generated: true
+
+# Performance & Monitoring
+performance:
+  enable_metrics: true
+  metrics_port: 9090  # Prometheus metrics
+  
+  # Health checks
+  health_check:
+    enabled: true
+    interval_seconds: 60
+    broker_connection: true
+    database_connection: true
+    ai_service: true

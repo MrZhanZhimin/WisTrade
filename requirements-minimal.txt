@@ -1,0 +1,25 @@
+# WisTrade Minimal Requirements - 核心依赖
+# 不包含PyQt6等GUI库，仅用于测试后端功能
+
+# 配置和日志
+pydantic>=2.5.0
+pyyaml>=6.0
+python-dotenv>=1.0.0
+structlog>=24.1.0
+
+# 异步和网络
+aiohttp>=3.9.0
+httpx>=0.27.0
+
+# 数据处理
+pandas>=2.2.0
+numpy>=1.26.0
+
+# 日期时间
+python-dateutil>=2.8.0
+pytz>=2024.1
+
+# 安全
+cryptography>=42.0.0
+bcrypt>=4.1.0
+pyjwt>=2.8.0
